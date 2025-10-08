@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PurchaseAuthorizationMsApplication<purchase-authorization-ms>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.github.jvalsesia.pams.PurchaseAuthorizationMsApplication",
+            "projectName": "purchase-authorization-ms",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-PurchaseConverterMsApplication<purchase-converter-ms>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.github.jvalsesia.pcms.PurchaseConverterMsApplication",
+            "projectName": "purchase-converter-ms",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

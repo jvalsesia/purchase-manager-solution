@@ -13,10 +13,11 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var jsonData = pm.response.json();",
+							"const jsonData = pm.response.json();",
 							"if (jsonData.access_token && jsonData.token_type && jsonData.expires_in) {",
-							"    pm.globals.set(\"accessToken\", jsonData.access_token)",
-							"}"
+							"    pm.collectionVariables.set(\"accessToken\", jsonData.access_token);",
+							"}",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {},
@@ -69,10 +70,12 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var jsonData = pm.response.json();",
+							"let jsonData = pm.response.json();",
 							"if (jsonData.id) {",
-							"    pm.globals.set(\"purchaseId\", jsonData.id)",
-							"}"
+							"    pm.environment.set(\"purchaseId\", jsonData.id);",
+							"}",
+							"",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {},
@@ -255,6 +258,16 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "purchaseId",
+			"value": ""
 		}
 	]
 }
