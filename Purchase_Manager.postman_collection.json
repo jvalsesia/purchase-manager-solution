@@ -1,0 +1,260 @@
+{
+	"info": {
+		"_postman_id": "896d7d57-3e07-4adc-a434-67911284bbf5",
+		"name": "Purchase Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "730092"
+	},
+	"item": [
+		{
+			"name": "01 - Get Access Token for SCOPE_purchase",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"if (jsonData.access_token && jsonData.token_type && jsonData.expires_in) {",
+							"    pm.globals.set(\"accessToken\", jsonData.access_token)",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "client1",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "password1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9090/oauth2/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02 - Create Purchase",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"if (jsonData.id) {",
+							"    pm.globals.set(\"purchaseId\", jsonData.id)",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"{{$randomProductName}}\",\n    \"transactionDate\": \"2022-10-01\",\n    \"purchaseAmount\": \"1000.00\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/purchases",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03 - Get Converted Purchase",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"if (jsonData.id) {",
+							"    pm.globals.set(\"purchaseId\", jsonData.id)",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/purchases/{{purchaseId}}/convert?country=Sweden",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"purchases",
+						"{{purchaseId}}",
+						"convert"
+					],
+					"query": [
+						{
+							"key": "country",
+							"value": "Sweden"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Treasury Reporting Rates of Exchange",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/rates_of_exchange?fields=effective_date,country,currency,country_currency_desc,exchange_rate&sort=-effective_date&filter=country:eq:Brazil,effective_date:lte:2024-10-10,effective_date:gte:2024-4-10",
+					"protocol": "https",
+					"host": [
+						"api",
+						"fiscaldata",
+						"treasury",
+						"gov"
+					],
+					"path": [
+						"services",
+						"api",
+						"fiscal_service",
+						"v1",
+						"accounting",
+						"od",
+						"rates_of_exchange"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "effective_date,country,currency,country_currency_desc,exchange_rate"
+						},
+						{
+							"key": "sort",
+							"value": "-effective_date"
+						},
+						{
+							"key": "filter",
+							"value": "country:eq:Brazil,effective_date:lte:2024-10-10,effective_date:gte:2024-4-10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET jwks.json",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/.well-known/jwks.json",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						".well-known",
+						"jwks.json"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

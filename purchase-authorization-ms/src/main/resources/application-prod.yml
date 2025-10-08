@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: purchase-authorization-server
+
+  config:
+    activate:
+      on-profile: prod
+
+server:
+  port: 9090
+
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem

@@ -1,0 +1,61 @@
+name: purchase-converter-solution
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: "purchase-postgres"
+    environment:
+      - 'POSTGRES_DB=pcms'
+      - 'POSTGRES_PASSWORD=pcms_password'
+      - 'POSTGRES_USER=pcms_user'
+    ports:
+      - '5432:5432'
+    networks:
+      - task-manager-network
+
+  purchase-authorization-ms:
+    image: 'jvalsesia/purchase-authorization-ms:latest'
+    container_name: "purchase-authorization-ms"
+    ports:
+      - "9090:9090"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - task-manager-network
+    environment:
+      SPRING_APPLICATION_NAME: 'purchase-authorization-ms'
+      SPRING_PROFILE_ACTIVE: 'prod'
+
+  purchase-converter-ms:
+    image: 'jvalsesia/purchase-converter-ms:latest'
+    container_name: "purchase-converter-ms"
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    depends_on:
+      - postgres
+      - purchase-authorization-ms
+    networks:
+      - task-manager-network
+    environment:
+      SPRING_APPLICATION_NAME: 'purchase-converter-ms'
+      SPRING_PROFILE_ACTIVE: 'prod'
+      DATABASE_URL: 'jdbc:postgresql://purchase-postgres:5432/pcms'
+      DATABASE_USERNAME: 'pcms_user'
+      DATABASE_PASSWORD: 'pcms_password'
+      TREASURY_API_SCHEME: 'https'
+      TREASURY_API_HOST: 'api.fiscaldata.treasury.gov'
+      TREASURY_API_PATH: '/services/api/fiscal_service/v1/accounting/od/rates_of_exchange'
+      ISSUER_URI_HOST: 'purchase-authorization-ms'
+
+
+
+
+networks:
+  task-manager-network:
+    driver: "bridge"
+

@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: purchase-converter-ms
+
+  config:
+    import:
+      - application-prod.yml
+
+  datasource:
+    url: jdbc:h2:mem:pcmsdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: false
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.github.jvalsesia.pcms: INFO
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+
+treasury:
+  api:
+    scheme: "https"
+    host: "api.fiscaldata.treasury.gov"
+    path: "/services/api/fiscal_service/v1/accounting/od/rates_of_exchange"
+
+issuer:
+  uri:
+    host: 'localhost'
+    port: 9090

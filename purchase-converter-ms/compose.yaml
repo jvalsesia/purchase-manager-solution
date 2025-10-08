@@ -1,0 +1,10 @@
+services:
+
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=pcms'
+      - 'POSTGRES_PASSWORD=pcms_password'
+      - 'POSTGRES_USER=pcms_user'
+    ports:
+      - '5432:5432'

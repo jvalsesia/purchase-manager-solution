@@ -1,0 +1,86 @@
+# Production Configuration
+spring:
+  application:
+    name: purchase-transaction-management-system
+
+  config:
+    activate:
+      on-profile: prod
+
+  # PostgreSQL Database Configuration
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/pcms}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+    
+    # Connection Pool Settings (HikariCP)
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+
+  # JPA/Hibernate for PostgreSQL
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  # Flyway Migration (for production schema management)
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # Disable H2 Console in Production
+  h2:
+    console:
+      enabled: false
+
+# Server Configuration
+server:
+  port: ${PORT:8080}
+
+# Logging
+logging:
+  level:
+    com.github.jvalsesia.pcms: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+
+treasury:
+  api:
+    scheme: 'https'
+    host: 'api.fiscaldata.treasury.gov'
+    path: '/services/api/fiscal_service/v1/accounting/od/rates_of_exchange'
+
+
+issuer:
+  uri:
+    host: 'localhost'
+    port: 9090
+
+
