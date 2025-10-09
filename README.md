@@ -11,33 +11,38 @@ This solution implements a microservices-based architecture for managing purchas
 The solution consists of two microservices:
 
 ### 1. Purchase Converter Microservice (`purchase-converter-ms`)
+
 The main application service that handles:
+
 - **API Layer (REST)**
-    - Create purchase transactions
-    - Convert currency for stored purchases
+  - Create purchase transactions
+  - Convert currency for stored purchases
 - **Domain Layer**
-    - Currency conversion logic
-    - Exchange rate logic
+  - Currency conversion logic
+  - Exchange rate logic
 - **Infrastructure Layer**
-    - Database persistence
-    - Treasury API client
-    - OAuth2 security integration
+  - Database persistence
+  - Treasury API client
+  - OAuth2 security integration
 
 ### 2. Purchase Authorization Microservice (`purchase-authorization-ms`)
+
 Security and authentication service that provides OAuth2-based authorization for the main service.
 
 ## System Components
 
 ### External Dependencies
+
 - **Treasury External API**: US Treasury Reporting Rates of Exchange API for currency conversion rates
 
 ### Database Profiles
+
 - **H2 (dev profile)**: In-memory database for development
 - **PostgreSQL (prod profile)**: Production-ready database
 
 ### Test Tool
-- **Postman**: Client application for testing and interacting with the API
 
+- **Postman**: Client application for testing and interacting with the API
 
 ## Technical Stack
 
@@ -51,14 +56,18 @@ Security and authentication service that provides OAuth2-based authorization for
 ## Requirements Implementation
 
 ### Requirement #1: Store Purchase Transaction
+
 The solution stores purchase transactions with:
+
 - **Description**: Max 50 characters
 - **Transaction date**: Valid date format
 - **Purchase amount**: Positive amount in USD, rounded to nearest cent
 - **Unique identifier**: Auto-generated unique ID
 
 ### Requirement #2: Retrieve with Currency Conversion
+
 The solution retrieves purchases converted to target currencies:
+
 - Returns: identifier, description, transaction date, original USD amount, exchange rate, converted amount
 - Uses Treasury API exchange rates within 6 months of purchase date
 - Returns error if no rate available within 6-month window
@@ -73,6 +82,7 @@ sh build-and-run.sh
 ## API Documentation
 
 Access Swagger UI at:
+
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
@@ -80,6 +90,7 @@ http://localhost:8080/swagger-ui/index.html
 ## Security
 
 The solution implements OAuth2 authentication:
+
 - Authorization microservice issues access tokens
 - Converter microservice validates tokens via `client_credentials` flow
 - Requests require valid `access_token` header
@@ -93,6 +104,7 @@ The solution uses an in-memory `registeredClientRepository` with a pre-configure
 - **Grant Type**: `client_credentials`
 
 **Important**: This `client1` configuration is for demonstration and testing purposes only. In a production environment, clients should be:
+
 - Stored in a secure database
 - Managed through a proper client registration process
 - Use secure secret management practices
@@ -110,9 +122,9 @@ rm keypair.pem
 ```
 
 This generates:
+
 - `public.pem`: Public key for token verification
 - `private.pem`: Private key for token signing
-
 
 ## Testing
 
@@ -123,6 +135,7 @@ A Postman collection is provided for API testing: `Purchase_Manager.postman_coll
 Follow these steps in order:
 
 #### 01 - Get Access Token for SCOPE_purchase
+
 First, obtain an OAuth2 access token from the authorization service:
 
 - **Endpoint**: `POST http://localhost:9090/oauth2/token`
@@ -133,11 +146,13 @@ First, obtain an OAuth2 access token from the authorization service:
 - **Response**: Returns `access_token` which is automatically saved to global variable `{{accessToken}}`
 
 #### 02 - Create Purchase
+
 Create a new purchase transaction using the access token:
 
-- **Endpoint**: `POST http://localhost:8080/api/purchases`
+- **Endpoint**: `POST https://localhost:8043/api/purchases`
 - **Authentication**: Bearer Token using `{{accessToken}}`
 - **Body** (JSON):
+
   ```json
   {
     "description": "{{$randomProductName}}",
@@ -145,12 +160,14 @@ Create a new purchase transaction using the access token:
     "purchaseAmount": "1000.00"
   }
   ```
+
 - **Response**: Returns created purchase with `id` which is automatically saved to global variable `{{purchaseId}}`
 
 #### 03 - Get Converted Purchase
+
 Retrieve a purchase transaction converted to a target country's currency:
 
-- **Endpoint**: `GET http://localhost:8080/api/purchases/{{purchaseId}}/convert?country=Sweden`
+- **Endpoint**: `GET https://localhost:8043/api/purchases/{{purchaseId}}/convert?country=Sweden`
 - **Authentication**: Bearer Token using `{{accessToken}}`
 - **Query Parameters**:
   - `country`: Target country for currency conversion (e.g., `Sweden`)
@@ -159,10 +176,10 @@ Retrieve a purchase transaction converted to a target country's currency:
   - Exchange rate used for conversion
   - Converted amount in target currency
 
-
 ## Deployment
 
 The solution is fully containerized using Docker Compose:
+
 - No separate database installation required
 - No separate web server installation required
 - All dependencies managed through containers
@@ -174,9 +191,11 @@ The solution is fully containerized using Docker Compose:
 The purchase-converter-ms includes comprehensive test coverage across multiple layers:
 
 #### Application Context Tests
+
 - **Context Loads**: Validates that the Spring Boot application context loads successfully with Testcontainers configuration
 
 #### Treasury API Client Tests (Integration)
+
 - **Valid Exchange Rate Retrieval**: Fetches exchange rates for valid countries (Brazil, Canada, Mexico, United Kingdom, Japan, Euro Zone) and dates
 - **Recent Date Handling**: Validates exchange rate retrieval for dates within the last month
 - **Invalid Country Handling**: Returns empty result for non-existent countries
@@ -188,6 +207,7 @@ The purchase-converter-ms includes comprehensive test coverage across multiple l
 - **Configuration Validation**: Verifies Treasury API configuration is loaded correctly
 
 #### Purchase Service Tests (Unit)
+
 - **Create Purchase Success**: Creates purchase transaction and returns response with all fields
 - **Get Purchase with Currency Conversion**: Converts purchase amount using exchange rate from Treasury API
 - **Purchase Not Found**: Throws PurchaseNotFoundException for non-existent purchase IDs
@@ -195,6 +215,7 @@ The purchase-converter-ms includes comprehensive test coverage across multiple l
 - **Decimal Rounding**: Validates converted amounts are rounded to 2 decimal places (e.g., 100 × 1.3333 = 133.33)
 
 #### Purchase Controller Integration Tests
+
 - **Create Purchase - Valid Request**: Returns HTTP 201 with purchase details for valid inputs
 - **Create Purchase - Invalid Description**: Returns HTTP 400 when description exceeds 50 characters
 - **Create Purchase - Negative Amount**: Returns HTTP 400 for negative purchase amounts
