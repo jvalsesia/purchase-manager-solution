@@ -30,7 +30,15 @@ spring:
     enabled: false
 
 server:
-  port: 8080
+  port: 8043
+  ssl:
+    enabled: true
+    key-alias: local_ssl
+    key-store: classpath:local-ssl.p12
+    key-store-type: PKCS12
+    key-password: r077123!
+    key-store-password: r077123!
+
 
 logging:
   level:
@@ -57,5 +65,6 @@ treasury:
 
 issuer:
   uri:
+    protocol: "http"
     host: 'localhost'
     port: 9090
