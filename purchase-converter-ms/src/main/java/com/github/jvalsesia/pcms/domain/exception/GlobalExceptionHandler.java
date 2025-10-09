@@ -1,7 +1,5 @@
-package com.github.jvalsesia.pcms.api.exception;
+package com.github.jvalsesia.pcms.domain.exception;
 
-import com.github.jvalsesia.pcms.domain.exception.CurrencyConversionException;
-import com.github.jvalsesia.pcms.domain.exception.PurchaseNotFoundException;
 import com.github.jvalsesia.pcms.infrastructure.treasury.TreasuryApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

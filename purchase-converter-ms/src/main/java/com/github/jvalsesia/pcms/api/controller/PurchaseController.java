@@ -3,7 +3,7 @@ package com.github.jvalsesia.pcms.api.controller;
 import com.github.jvalsesia.pcms.api.dto.ConvertedPurchaseResponse;
 import com.github.jvalsesia.pcms.api.dto.PurchaseRequest;
 import com.github.jvalsesia.pcms.api.dto.PurchaseResponse;
-import com.github.jvalsesia.pcms.api.exception.ErrorResponse;
+import com.github.jvalsesia.pcms.domain.exception.ErrorResponse;
 import com.github.jvalsesia.pcms.domain.service.PurchaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,7 +40,6 @@ public class PurchaseController {
         PurchaseResponse response = purchaseService.createPurchase(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
 
     @Operation(summary = "Fetch Purchase REST API", description = "REST API to Purchase based on id")
     @ApiResponses({
