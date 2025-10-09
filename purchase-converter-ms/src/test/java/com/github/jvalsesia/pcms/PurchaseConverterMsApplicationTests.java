@@ -12,4 +12,8 @@ class PurchaseConverterMsApplicationTests {
     void contextLoads() {
     }
 
+    @Test
+    void mainMethodStartsApplication() {
+        PurchaseConverterMsApplication.main(new String[] {});
+    }
 }
