@@ -84,7 +84,7 @@ sh build-and-run.sh
 Access Swagger UI at:
 
 ```
-http://localhost:8080/swagger-ui/index.html
+https://localhost:8043/swagger-ui/index.html
 ```
 
 ## Security
