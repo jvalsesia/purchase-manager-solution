@@ -24,7 +24,12 @@ public class ResourceServerConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(o -> o.jwt(Customizer.withDefaults()))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.GET, "/api/purchases/{id}")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/purchases/{id}")
+                        .hasAnyAuthority("SCOPE_purchase")
+                        .requestMatchers(HttpMethod.POST, "/api/purchases")
                         .hasAnyAuthority("SCOPE_purchase")
                         .anyRequest().authenticated());
 
